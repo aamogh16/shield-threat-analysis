@@ -1,5 +1,9 @@
 import sys
 import os
+
+from app.schemas.threat import ListArticleData
+from app.services.ai_analyzer import AIAnalyzer
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from dotenv import load_dotenv
@@ -18,8 +22,15 @@ def test():
   print("-" * 50)
 
   news_fetcher = NewsFetcher()
+  ai = AIAnalyzer()
 
-  news_fetcher.fetch_article_data(key)
+  article_list = news_fetcher.fetch_and_convert()
+
+  listarticledata = ListArticleData(
+      articles=article_list
+  )
+
+  ai.analyze_articles(listarticledata)
 
 
 if __name__ == "__main__":

@@ -57,7 +57,7 @@ def test_pipeline():
   # fetching real news articles with newsfetcher object
   fetcher = NewsFetcher()
   threats = fetcher.fetch_and_convert()
-  print(f"Processing {len(threats)} test articles...\n")
+  print(f"Processing {len(threats.articles)} test articles...\n")
 
   # establishing database connection
   db = next(get_db())
@@ -66,16 +66,12 @@ def test_pipeline():
   # creating a threat processor object
   processor = ThreatProcessor()
 
-  # process articles one by one and collect the results
-  saved_threats = []
-  for article in threats:
-    result = processor.process_article(article, db)
-    if result:  # If a threat was saved
-      saved_threats.append(result)
+  # process all articles
+  saved_threats = processor.process_articles(threats, db)
 
   print("\n" + "-" * 50)
   print("RESULTS:")
-  print(f"Articles processed: {len(threats)}")
+  print(f"Articles processed: {len(threats.articles)}")
   print(f"Threats detected and saved: {len(saved_threats)}")
 
   # checking if data is actually in the database
