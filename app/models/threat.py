@@ -14,7 +14,6 @@ class Threat(Base):
   source = Column(String(100), nullable=False)
   source_url = Column(String(500), unique=True, nullable=False)  # Unique prevents duplicate articles
   published_at = Column(DateTime, nullable=True)
-  location = Column(String(200), nullable=True)
 
   # AI Analysis Results - REQUIRED fields (nothing gets stored without AI analysis)
   ai_threat_level = Column(Integer, nullable=False)  # 1-10 scale from AI
@@ -35,8 +34,8 @@ class Threat(Base):
   updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
   # Flags
-  is_active = Column(Boolean, default=True)         # Can soft-delete threats
-  requires_review = Column(Boolean, default=False)   # Flag if AI confidence is low
+  is_active = Column(Boolean, default=True)           # Can soft-delete threats
+  requires_review = Column(Boolean, default=False)    # Flag if AI confidence is low
 
   # Computed properties for the API response
   @property

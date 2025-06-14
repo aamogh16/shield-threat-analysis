@@ -13,11 +13,13 @@ class NewsFetcher:
 
   def fetch_article_data(self, key):
     """
-    Performs a request to get the real article data via NewsAPI. returns a json of the top headlines in the world right now.
-    :param key: the API key that is required to call the API.
-    :return: a json of all the articles that are top headlines right now.
+    Performs a request to get the real article data via NewsAPI. Returns a json of the top headlines
+    in the United States right now.
+    :param key: The API key that is required to call the API.
+    :return: A json of all the articles that are top headlines right now.
     """
-    return requests.get(f"https://newsapi.org/v2/top-headlines?apiKey={key}").json()
+
+    return requests.get(f"https://newsapi.org/v2/top-headlines?country=us&apiKey={key}").json()
 
   def convert_data(self, article_data, db):
     """
