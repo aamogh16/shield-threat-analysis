@@ -5,7 +5,7 @@ from typing import Optional, List
 # What comes from news sources, this is the raw data we have to process through AI
 class ArticleData(BaseModel):
   title: str
-  description: Optional[str]
+  description: Optional[str] = None
   url: str
   source: str
   published_at: Optional[datetime]
@@ -19,14 +19,14 @@ class AIAnalysisResult(BaseModel):
   keywords: List[str]
   confidence: float  # 0-1, how sure AI is
 
-# What gets stored in database (combination of article + AI analysis)
+# What gets stored in database (combination of article and AI analysis)
 class ThreatCreate(BaseModel):
   # Original article info
   title: str
-  description: Optional[str]
+  description: Optional[str] = None
   source: str
   source_url: str
-  published_at: Optional[datetime]
+  published_at: Optional[datetime] = None
 
   # AI-determined fields (required because AI must analyze first)
   ai_threat_level: int

@@ -7,3 +7,4 @@ httpx==0.25.1
 redis==5.0.1
 celery==5.3.4
 python-multipart==0.0.19
+requests~=2.32.4
