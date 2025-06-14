@@ -56,7 +56,7 @@ def test_pipeline():
 
   # fetching real news articles with newsfetcher object
   fetcher = NewsFetcher()
-  threats = fetcher.fetch_article_data("d7c191c103284c168702869d6bb7edae")
+  threats = fetcher.fetch_and_convert()
   print(f"Processing {len(threats)} test articles...\n")
 
   # establishing database connection
