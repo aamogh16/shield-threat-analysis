@@ -42,9 +42,9 @@ class NewsFetcher:
           published_at=datetime.fromisoformat(date_time[:19])
       )
 
-      res_articles.append(res)
-      # if not self.check_if_duplicate(db, res):
-      #   res_articles.append(res)
+      if not self.check_if_duplicate(db, res):
+        res_articles.append(res)
+
     list_articles = ListArticleData(articles=res_articles)
     return list_articles
 

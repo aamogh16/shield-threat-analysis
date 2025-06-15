@@ -33,5 +33,4 @@ class AIAnalyzer:
           "response_schema": list[AIAnalysisResult]
         },
     )
-    print(response.text)
     return response.text
