@@ -73,7 +73,8 @@ class ThreatProcessor:
               ai_category=match_dict.get("category"),
               ai_summary=match_dict.get("summary"),
               ai_confidence=match_dict.get("confidence"),
-              ai_keywords=match_dict.get("keywords")
+              ai_keywords=match_dict.get("keywords"),
+              ai_reason=match_dict.get("reason")
           )
           res.append(threat)
           db.add(threat)

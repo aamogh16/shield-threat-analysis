@@ -23,6 +23,7 @@ class AIAnalysisResult(BaseModel):
   keywords: List[str]
   confidence: float  # 0-1, how sure AI is
   title: str
+  reason: str
 
 # What gets stored in database (combination of article and AI analysis)
 class ThreatCreate(BaseModel):
@@ -39,15 +40,17 @@ class ThreatCreate(BaseModel):
   ai_summary: str
   ai_confidence: float
   ai_keywords: List[str]
+  ai_reason: str
 
   # Location if detected
   location: Optional[str] = None
 
 # Human override (for later)
 class ThreatOverride(BaseModel):
-  threat_level: Optional[int] = None
-  category: Optional[str] = None
-  notes: Optional[str] = None
+  human_threat_level: Optional[int] = None
+  human_category: Optional[str] = None
+  human_notes: Optional[str] = None
+  reviewed_by: Optional[str] = None
 
 # What API returns - clean and simple
 class ThreatResponse(BaseModel):

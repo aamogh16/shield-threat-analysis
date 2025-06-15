@@ -21,6 +21,7 @@ class Threat(Base):
   ai_summary = Column(Text, nullable=False)          # AI's explanation
   ai_confidence = Column(Float, nullable=False)      # 0.0-1.0 how sure AI is
   ai_keywords = Column(JSON, nullable=False)         # ["keyword1", "keyword2"]
+  ai_reason = Column(Text, nullable=False)
 
   # Human Override Fields - OPTIONAL (only filled if human reviews)
   human_threat_level = Column(Integer, nullable=True)     # NULL unless human overrides
@@ -34,7 +35,6 @@ class Threat(Base):
   updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
   # Flags
-  is_active = Column(Boolean, default=True)           # Can soft-delete threats
   requires_review = Column(Boolean, default=False)    # Flag if AI confidence is low
 
   # Computed properties for the API response

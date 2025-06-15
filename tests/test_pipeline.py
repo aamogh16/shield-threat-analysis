@@ -56,11 +56,12 @@ def test_pipeline():
 
   # fetching real news articles with newsfetcher object
   fetcher = NewsFetcher()
-  threats = fetcher.fetch_and_convert()
+  db = next(get_db())
+  threats = fetcher.fetch_and_convert(db)
   print(f"Processing {len(threats.articles)} test articles...\n")
 
   # establishing database connection
-  db = next(get_db())
+
   db.query(Threat).delete()
 
   # creating a threat processor object
