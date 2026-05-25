@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from google import genai
+from google.genai.errors import ClientError
 
 from app.schemas.threat import ArticleData, ListArticleData, AIAnalysisResult
 
@@ -26,7 +27,7 @@ class AIAnalyzer:
     client = genai.Client(api_key=apikey)
     input_dict = articles.model_dump()
     response = client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-3.5-flash",
         contents=f"Read through these articles. Provide the following for EACH article: a boolean if it represents a threat or not, a threat-level from 1-10, a 1-2 word category representing the article, a brief summary of the article, a list of keywords, a float from 0.0-1.0 of how confident you are in your assessment, the original title of the article, and provide a brief statement explaining why or why not this article is a threat. Here are the articles: {str(input_dict)}",
         config={
           "response_mime_type": "application/json",

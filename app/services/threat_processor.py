@@ -59,7 +59,7 @@ class ThreatProcessor:
 
       for article in listArticleData.articles:
         match_dict = self.find_matching_dictionary(article.title, ai_result_dict)
-        if match_dict.get("is_threat"):
+        if match_dict and match_dict.get("is_threat"):
           threat = Threat(
               title=article.title,
               description=article.description,
