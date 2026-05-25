@@ -1,12 +1,13 @@
 import os
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
-from fastapi import FastAPI, Header
+from fastapi import FastAPI
 from dotenv import load_dotenv
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException
-from starlette.responses import PlainTextResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from starlette.responses import PlainTextResponse, RedirectResponse
 
 from app.database import get_db, engine
 from app.models.threat import Threat
@@ -34,13 +35,9 @@ app = FastAPI(
 )
 
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 def read_root():
-  return {
-    "message": "S.H.I.E.L.D. Threat Analysis Platform ACTIVE",
-    "status": "operational",
-    "clearance_level": "public"
-  }
+  return RedirectResponse(url="/docs")
 
 
 @app.get("/api/threats", response_model=List[ThreatResponse])
@@ -169,11 +166,15 @@ def get_one_threat(threat_id: int, db: Session = Depends(get_db)):
   return threat
 
 
+_bearer = HTTPBearer(auto_error=False)
+
+
 @app.get("/api/cron/run-pipeline")
-def cron_run_pipeline(authorization: Optional[str] = Header(None), db: Session = Depends(get_db)):
-  """Vercel Cron Job endpoint — runs the full threat analysis pipeline once per hour."""
+def cron_run_pipeline(credentials: Optional[HTTPAuthorizationCredentials] = Depends(_bearer), db: Session = Depends(get_db)):
+  """Vercel Cron Job endpoint — runs the full threat analysis pipeline. Requires Bearer token matching CRON_SECRET."""
   cron_secret = os.getenv("CRON_SECRET")
-  if cron_secret and authorization != f"Bearer {cron_secret}":
+  token = credentials.credentials if credentials else None
+  if cron_secret and token != cron_secret:
     raise HTTPException(status_code=401, detail="Unauthorized")
 
   from app.services.news_fetcher import NewsFetcher
