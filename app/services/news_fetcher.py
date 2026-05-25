@@ -18,7 +18,7 @@ class NewsFetcher:
     :return: A json of all the articles that are top headlines right now.
     """
 
-    return requests.get(f"https://newsapi.org/v2/top-headlines?country=us&apiKey={key}").json()
+    return requests.get(f"https://newsapi.org/v2/top-headlines?country=us&pageSize=100&apiKey={key}").json()
 
   def convert_data(self, article_data, db):
     """
