@@ -1,23 +1,36 @@
+import os
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
-from fastapi import FastAPI
+from fastapi import FastAPI, Header
 from dotenv import load_dotenv
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException
 from starlette.responses import PlainTextResponse
 
-from app.database import get_db
+from app.database import get_db, engine
 from app.models.threat import Threat
 from app.schemas.threat import ThreatResponse, ThreatOverride, ArticleData, AIAnalysisResult
 
 # loading environment variables
 load_dotenv()
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # create tables on startup (idempotent — safe to run every cold start)
+    from app.database import Base
+    import app.models.threat  # noqa: ensure model is registered
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
 # creating a FastAPI app
 app = FastAPI(
     title="S.H.I.E.L.D. Threat Analysis Platform",
     description="AI-powered threat monitoring system",
-    version="0.1.0"
+    version="0.1.0",
+    lifespan=lifespan
 )
 
 
@@ -154,3 +167,29 @@ def get_one_threat(threat_id: int, db: Session = Depends(get_db)):
   if not threat:
     raise HTTPException(status_code=404, detail="Threat not found")
   return threat
+
+
+@app.get("/api/cron/run-pipeline")
+def cron_run_pipeline(authorization: Optional[str] = Header(None), db: Session = Depends(get_db)):
+  """Vercel Cron Job endpoint — runs the full threat analysis pipeline once per hour."""
+  cron_secret = os.getenv("CRON_SECRET")
+  if cron_secret and authorization != f"Bearer {cron_secret}":
+    raise HTTPException(status_code=401, detail="Unauthorized")
+
+  from app.services.news_fetcher import NewsFetcher
+  from app.services.threat_processor import ThreatProcessor
+
+  # remove threats older than 5 days
+  cutoff = datetime.now() - timedelta(days=5)
+  deleted = db.query(Threat).filter(Threat.created_at < cutoff).delete()
+  db.commit()
+
+  fetcher = NewsFetcher()
+  processor = ThreatProcessor()
+  articles = fetcher.fetch_and_convert(db)
+
+  if not articles.articles:
+    return {"status": "no_new_articles", "deleted_old": deleted}
+
+  saved = processor.process_articles(articles, db)
+  return {"status": "ok", "new_threats": len(saved), "deleted_old": deleted}

@@ -66,7 +66,7 @@ class ThreatResponse(BaseModel):
   summary: str       # AI summary is always shown
 
   # Metadata
-  location: Optional[str]
+  location: Optional[str] = None
   created_at: datetime
 
   # Useful flags

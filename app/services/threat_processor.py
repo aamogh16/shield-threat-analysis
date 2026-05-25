@@ -1,11 +1,9 @@
 import json
 
 from app.models.threat import Threat
-from app.schemas.threat import ArticleData, ListArticleData
-from app.schemas.threat import ThreatCreate
+from app.schemas.threat import ListArticleData
 from app.services.ai_analyzer import AIAnalyzer
 from app.services.mock_ai import MockAI
-from app.database import get_db
 
 
 class ThreatProcessor:

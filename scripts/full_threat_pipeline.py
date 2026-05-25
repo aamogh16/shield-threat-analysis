@@ -89,7 +89,7 @@ AAAA BAAAAA EAAAAAAA   AAAAAAAAA   AAAAAA MAAAAAAD AAAA
     saved_threats = processor.process_articles(articles, db)
 
     print(
-      f"{len(saved_threats)} articles show situations that post a threat. Information has been sent to the database.")
+      f"{len(saved_threats)} articles show situations that pose a threat. Information has been sent to the database.")
 
     print(
       f"🛡️ S.H.I.E.L.D. Pipeline completed at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")

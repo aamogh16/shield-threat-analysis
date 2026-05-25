@@ -9,6 +9,11 @@ load_dotenv()
 # getting database URL from env, or just using sqlite as a default backup
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./shield.db")
 
+# Neon (and some other Postgres hosts) gives a plain postgresql:// URL; SQLAlchemy
+# needs the explicit psycopg2 driver prefix to avoid deprecation warnings on 2.x.
+if SQLALCHEMY_DATABASE_URL.startswith("postgresql://"):
+    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1)
+
 # creating a database engine
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
